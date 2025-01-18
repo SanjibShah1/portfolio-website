@@ -12,7 +12,7 @@ const Education = () => {
     },
     {
       degree: "Higher Secondary Education",
-      institution: "Example College",
+      institution: "Capital College and Research Center",
       year: "2018 - 2020",
       description: "Science stream with Computer Science as major subject."
     }
