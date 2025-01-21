@@ -7,6 +7,19 @@ import { Mail, Phone, MapPin, Send } from 'lucide-react';
 const Contact = () => {
   const formRef = useRef();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    message: ''
+  });
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value
+    }));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -20,9 +33,10 @@ const Contact = () => {
         'IZnv9ZStkrPrlpSVs'
       );
       toast.success('Message sent successfully!');
-      e.target.reset();
+      setFormData({ name: '', email: '', message: '' }); // Reset form data
     } catch (error) {
-      toast.error('Failed to send message. Please try again.');
+      console.error('EmailJS error: ', error.text);
+      toast.error(`Failed to send message. Error: ${error.text}`);
     } finally {
       setIsSubmitting(false);
     }
@@ -82,6 +96,8 @@ const Contact = () => {
                   id="name"
                   name="name"
                   required
+                  value={formData.name}
+                  onChange={handleInputChange}
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
@@ -94,6 +110,8 @@ const Contact = () => {
                   id="email"
                   name="email"
                   required
+                  value={formData.email}
+                  onChange={handleInputChange}
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
@@ -106,6 +124,8 @@ const Contact = () => {
                   name="message"
                   rows={4}
                   required
+                  value={formData.message}
+                  onChange={handleInputChange}
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                 ></textarea>
               </div>
@@ -114,8 +134,16 @@ const Contact = () => {
                 disabled={isSubmitting}
                 className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2 disabled:opacity-50"
               >
-                <Send className="w-5 h-5" />
-                <span>{isSubmitting ? 'Sending...' : 'Send Message'}</span>
+                {isSubmitting ? (
+                  <>
+                    <span className="animate-spin">🌀</span> Sending...
+                  </>
+                ) : (
+                  <>
+                    <Send className="w-5 h-5" />
+                    <span>Send Message</span>
+                  </>
+                )}
               </button>
             </form>
           </motion.div>
