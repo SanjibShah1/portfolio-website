@@ -24,23 +24,25 @@ const Contact = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-
+  
     try {
-      await emailjs.sendForm(
+      const response = await emailjs.sendForm(
         'service_he07aag',
         'template_g33pphx',
         formRef.current,
         'IZnv9ZStkrPrlpSVs'
       );
+      console.log('EmailJS Response:', response); // Log full response for debugging
       toast.success('Message sent successfully!');
       setFormData({ name: '', email: '', message: '' }); // Reset form data
     } catch (error) {
-      console.error('EmailJS error: ', error.text);
-      toast.error(`Failed to send message. Error: ${error.text}`);
+      console.error('EmailJS error:', error); // Log entire error object for more details
+      toast.error(`Failed to send message. Error: ${error.text || error.message}`);
     } finally {
       setIsSubmitting(false);
     }
   };
+  
 
   return (
     <section id="contact" className="py-20 bg-white">
