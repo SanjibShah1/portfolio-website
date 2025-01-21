@@ -14,10 +14,10 @@ const Contact = () => {
 
     try {
       await emailjs.sendForm(
-        'YOUR_SERVICE_ID',
-        'YOUR_TEMPLATE_ID',
+        'service_he07aag',
+        'template_g33pphx',
         formRef.current,
-        'YOUR_PUBLIC_KEY'
+        'IZnv9ZStkrPrlpSVs'
       );
       toast.success('Message sent successfully!');
       e.target.reset();
