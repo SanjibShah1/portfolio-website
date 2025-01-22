@@ -1,116 +1,124 @@
 import React, { useState } from 'react';
 import emailjs from 'emailjs-com';
-import toast from 'react-hot-toast';
 
-const Contact = () => {
+const ContactForm = () => {
+  // State variables to hold form data
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     message: ''
   });
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Handle input change
-  const handleInputChange = (e) => {
+  const [status, setStatus] = useState('');
+
+  // Handle form data change
+  const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
+    setFormData({
+      ...formData,
       [name]: value
-    }));
+    });
   };
 
   // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
-    setIsSubmitting(true);
 
-    // Send email using emailjs
+    const templateParams = {
+      from_name: formData.name,
+      from_email: formData.email,
+      message: formData.message
+    };
+
+    // Email.js service sending
     emailjs
-      .sendForm(
-        'service_mpeau16',  // Replace with your service ID
-        'template_g33pphx',  // Replace with your template ID
-        e.target,
-        'IZnv9ZStkrPrlpSVs'      // Replace with your user ID
+      .send(
+        'service_mpeau16',        // Replace with your service ID
+        'template_g33pphx',        // Replace with your template ID
+        templateParams,
+        'IZnv9ZStkrPrlpSVs'             // Replace with your user ID
       )
       .then(
         (response) => {
-          console.log('SUCCESS:', response);
-          toast.success('Message sent successfully!');
-          setFormData({ name: '', email: '', message: '' }); // Reset form
+          console.log('Success:', response);
+          setStatus('Message sent successfully!');
+          setFormData({
+            name: '',
+            email: '',
+            message: ''
+          });
         },
         (error) => {
-          console.error('ERROR:', error);
-          toast.error('Failed to send message. Please try again.');
+          console.log('Error:', error);
+          setStatus('Failed to send message. Please try again later.');
         }
-      )
-      .finally(() => {
-        setIsSubmitting(false);
-      });
+      );
   };
 
   return (
-    <section id="contact" className="py-20 bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="text-3xl md:text-4xl font-bold text-gray-900 text-center mb-4">Contact Me</h2>
-        <div className="w-20 h-1 bg-blue-600 mx-auto mb-8"></div>
+    <div className="contact-form">
+      <h2 className="text-center text-3xl font-bold text-blue-500 mb-6">Contact Me</h2>
+      <form onSubmit={handleSubmit} className="max-w-md mx-auto bg-white p-8 rounded-md shadow-lg">
+        <div className="mb-4">
+          <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+            Name
+          </label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+            required
+            className="w-full p-3 border rounded-md"
+          />
+        </div>
 
-        <form onSubmit={handleSubmit} className="max-w-lg mx-auto space-y-6">
-          <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-              Name
-            </label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              required
-              value={formData.name}
-              onChange={handleInputChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-            />
-          </div>
-          
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-              Email
-            </label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              required
-              value={formData.email}
-              onChange={handleInputChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-            />
-          </div>
-          
-          <div>
-            <label htmlFor="message" className="block text-sm font-medium text-gray-700">
-              Message
-            </label>
-            <textarea
-              id="message"
-              name="message"
-              rows="4"
-              required
-              value={formData.message}
-              onChange={handleInputChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-            />
-          </div>
+        <div className="mb-4">
+          <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+            Email
+          </label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            required
+            className="w-full p-3 border rounded-md"
+          />
+        </div>
 
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50"
-          >
-            {isSubmitting ? 'Sending...' : 'Send Message'}
-          </button>
-        </form>
-      </div>
-    </section>
+        <div className="mb-4">
+          <label htmlFor="message" className="block text-sm font-medium text-gray-700">
+            Message
+          </label>
+          <textarea
+            id="message"
+            name="message"
+            value={formData.message}
+            onChange={handleChange}
+            required
+            className="w-full p-3 border rounded-md"
+            rows="4"
+          ></textarea>
+        </div>
+
+        <button
+          type="submit"
+          className="w-full bg-blue-500 text-white p-3 rounded-md hover:bg-blue-600 transition-all"
+        >
+          Send Message
+        </button>
+
+        {status && (
+          <div className="mt-4 text-center">
+            <p className="text-green-500">{status}</p>
+          </div>
+        )}
+      </form>
+    </div>
   );
 };
 
-export default Contact;
+export default ContactForm;
